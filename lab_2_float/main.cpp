@@ -88,9 +88,9 @@ void infinitycycle() {
 const double pi_ref = 3.141592653589793;
 
 //pi/4=1-1/3+1/5-1/7...(б)
-float pi_first(int n) {
+float pi_first(long long n) {
     float pi_4 = 1;
-    for (int i=1; i<n;++i){
+    for (long long i=1; i<n;++i){
         if(i%2 != 0){
             pi_4 -=1.f/(2*i +1);
         }
@@ -102,9 +102,9 @@ float pi_first(int n) {
 }
 
 // Нилакантха: 3+ 4*(1/2*3*4 -1/4*5*6 ...) (а)
-float pi_second(int n) {
+float pi_second(long long n) {
     float pi_4=0;
-     for (int i=1; i<n;++i){
+     for (long long i=1; i<n;++i){
         if(i%2 != 0){
             pi_4 +=1.f/(2*i*(2*i+1)*(2*i+2));
         }
@@ -116,9 +116,9 @@ float pi_second(int n) {
 }
 
 //сходится не к pi (в)
-float pi_third(int n) {
+float pi_third(long long n) {
      float pi_4 = 1;
-    for (int i=1; i<n;++i){
+    for (long long i=1; i<n;++i){
         if(i%2 != 0){
             pi_4 -=1.f/(2*i +1);
         }
@@ -130,10 +130,10 @@ float pi_third(int n) {
 }
 
 // Бейли-Борвейна-Плюффа pi=sum(1/16^k ((4/8k+1)-(2/8k+4)-(1/8k+5)-(1/8k+6)) (г)
-float pi_fourth(int n) {
+float pi_fourth(long long n) {
     float pi = 0;
     float koef = 1;
-    for (int i = 0; i < n; ++i) {
+    for (long long i = 0; i < n; ++i) {
         float add = 4.0f / (8.0f*i + 1.0f)- 2.0f / (8.0f*i + 4.0f)
                    - 1.0f / (8.0f*i + 5.0f)- 1.0f / (8.0f*i + 6.0f);
         pi += add*koef;
@@ -143,10 +143,10 @@ float pi_fourth(int n) {
 }
 
 //графики
-float error_first(int n){ return fabs((float)pi_first(n)-pi_ref); }
-float error_second(int n){ return fabs((float)pi_second(n)-pi_ref); }
-float error_third(int n){ return fabs((float)pi_third(n)-pi_ref); }
-float error_fourth(int n){ return fabs((float)pi_fourth(n)-pi_ref); }
+float error_first(long long n){ return fabs((float)pi_first(n)-pi_ref); }
+float error_second(long long n){ return fabs((float)pi_second(n)-pi_ref); }
+float error_third(long long n){ return fabs((float)pi_third(n)-pi_ref); }
+float error_fourth(long long n){ return fabs((float)pi_fourth(n)-pi_ref); }
 void graphs_4(const string& filename) {
     ofstream f(filename);
     f<<fixed;
@@ -171,7 +171,7 @@ double get_time() {
     ).count() / 1e6;
 }
 
-double measure_time(float (*f)(int), int n, int repeats) { //для всех подсчетов пи
+double measure_time(float (*f)(long long), long long n, int repeats) { //для всех подсчетов пи
     double total=0;
     for (int r = 0; r < repeats; ++r) {
         double t_start = get_time();
@@ -187,7 +187,7 @@ void graphs_5(const string& filename) {
     file<<fixed;
     file.precision(10);
     file << "d,formula,iterations,estimate,error,seconds\n";
-    float (*funcs[])(int) = {pi_first, pi_second, pi_third, pi_fourth};
+    float (*funcs[])(long long) = {pi_first, pi_second, pi_third, pi_fourth};
     string names[]         = {"pi_first", "pi_second", "pi_third", "pi_fourth"};
     int max_limits[]       = {100000,1000000,10000,10000}; 
     int num_formulas = 4;
@@ -198,15 +198,15 @@ void graphs_5(const string& filename) {
         double target_error = 1.0 / poww;
         
         for (int i = 0; i < num_formulas; ++i) {
-            float (*f)(int) = funcs[i];
+            float (*f)(long long) = funcs[i];
             string name = names[i];
             int limit = max_limits[i]; 
 
-            int amount = -1; // число итераций
+            long long amount = -1; // число итераций
             float res = 0.0f; // результат формулы
 
             // ищем минимальное N, при котором достигается точность
-            for (int n = 1; n <= limit; ++n) {
+            for (long long n = 1; n <= limit; ++n) {
                 res = f(n);
                 if (fabs((double)res - pi_ref) < target_error) {
                     amount = n;
